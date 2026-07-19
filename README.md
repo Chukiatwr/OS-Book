@@ -1,2 +1,2 @@
 # OS-Book
-Operating System Textbook 2026
+Assoc.Prof. Chukiat Worasucheep's Principles of Operating System Textbook 2026
