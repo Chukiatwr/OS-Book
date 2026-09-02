@@ -2,14 +2,12 @@
  * JavaThreads.java
  * This program demonstrates the use of Java threads.
  */
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 public class JavaThreads {
+
     static String sharedMessage;
 
     static class ChildTask implements Runnable {
+
         private String message;
 
         public ChildTask(String message) {
@@ -21,29 +19,32 @@ public class JavaThreads {
             // Print the message received from the main thread.
             System.out.println("Child thread received: " + message);
 
-            // Modify the global variable.
+            // Modify the shared variable.
             sharedMessage = "Bye.";
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        String message = "Hello, My thread child.";
+    public static void main(String[] args) {
+        sharedMessage = "Hello.";
 
-        // Initialize the global variable.
-        sharedMessage = message;
+        System.out.println("Main thread sends: " + sharedMessage);
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
+        // Create a child task.
+        ChildTask task = new ChildTask(sharedMessage);
 
-        // Create a child task and submit it to the executor.
-        ChildTask task = new ChildTask(message);
-        Future<?> future = executor.submit(task);
+        // Create a thread to run the task.
+        Thread childThread = new Thread(task);
 
-        // Wait for the child thread to finish.
-        future.get();
+        // Start the child thread.
+        childThread.start();
 
-        // Print the modified global variable.
-        System.out.println("Main thread reads: " + sharedMessage);
+        try {
+            // Wait until the child thread finishes.
+            childThread.join();
+        } catch (InterruptedException e) {
+            System.out.println("Main thread was interrupted.");
+        }
 
-        executor.shutdown();
+        System.out.println("Shared message after child thread: " + sharedMessage);
     }
 }
